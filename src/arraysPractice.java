@@ -40,36 +40,65 @@ public class arraysPractice {
         }
         return returnArray;
     }
-    static int[] radixSort(int[] array, int maxDigits){
-        //Instead of using string conversions
-        //You can divide by a power of 10 and use modulus to get digits
-        //It is far superior resource-wise
-        //And makes more sense anyway
-        //Idiot
+    static int[] radixSort(int[] array, int length, int maxDigits){
+        int e = 1;
+        for(int i=1;i<=maxDigits;i++){
+            int j = 0;
+            int[][] bins = new int[10][length];
+            for(int num : array){
+                bins[(num/e)%10][j] = num;
+                j++;
+            }
+            j = 0;
+            for(int[] bin : bins){
+                for(int num : bin){
+                    if(num!=0){
+                        array[j] = num;
+                        j++;
+                    }
+                }
+            }
+            e*=10;
+        }
         return array;
     }
     static void timeFunction(int[] arr, int range){
-        System.out.println();
         double mil = 1000000.00;
-        long startTime = System.nanoTime();//start timer
+        int[] arr2 = arr.clone();
+        int size = arr2.length;
+        long startTime, endTime;
+        /*startTime = System.nanoTime();//start timer
         sortArray(arr, range);
-        long endTime = System.nanoTime();//end timer
-        System.out.println("Shitty Radix Sort (String Conversion): " + (double)(endTime-startTime)/mil + " milliseconds");
+        endTime = System.nanoTime();//end timer
+        System.out.println("Shitty Radix Sort (String Conversion): " + (double)(endTime-startTime)/mil + " milliseconds");*/
         startTime = System.nanoTime();//start timer
         Arrays.sort(arr);
         endTime = System.nanoTime();//end timer
-        for(int num : arr){System.out.print(num + " ");}
+        //for(int num : arr){System.out.print(num + " ");}
         System.out.println();
         System.out.println("Quicksort (Dual-Pivot): " + (double)(endTime-startTime)/mil + " milliseconds");
+        startTime = System.nanoTime();//start timer
+        radixSort(arr2,size,range);
+        endTime = System.nanoTime();//end timer
+        //for(int num : arr2){System.out.print(num + " ");}
+        System.out.println();
+        System.out.println("New Radix Sort (fingers crossed): " + (double)(endTime-startTime)/mil + " milliseconds");
     }
     public static void main(String[] args){
-        int range = 9999;
-        int size = 9999;
-        int[] arr = makeArray(size, range);
-        for(int num : arr){System.out.print(num + " ");}
+        int[] ranges = {20, 200, 2000, 20000, 200000, 2000000};
+        int[] sizes = {20, 200, 2000, 20000, 200000, 2000000};
+        //int[] arr = makeArray(size, range);
+        //for(int num : arr){System.out.print(num + " ");}
         System.out.println();
-        int[] sorted = sortArray(arr,Integer.toString(range).length());
-        for(int num : sorted){System.out.print(num + " ");}
-        timeFunction(arr,Integer.toString(range).length());
+        System.out.println("Unsorted Array ^");
+        /*int[] sorted = sortArray(arr,Integer.toString(range).length());
+        for(int num : sorted){System.out.print(num + " ");}*/
+        for(int i = 0; i < 6; i++){
+            for(int j = 0; j < 6; j++) {
+                System.out.println("\nArray size: " + sizes[i] + ", Value range: " + ranges[j]);
+                int[] arr = makeArray(sizes[i], ranges[j]);
+                timeFunction(arr, Integer.toString(ranges[j]).length());
+            }
+        }
     }
 }
